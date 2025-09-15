@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createEventGallery, getAllEventGalleries, getEventGalleryBySlug } from '../controllers/eventGallery.controller.js';
+import { createEventGallery, getAllEventGalleries, getEventGalleryBySlug, deleteEventGallery } from '../controllers/eventGallery.controller.js';
 import { upload } from '../util/cloudinary.js';
 
 const router = Router();
@@ -15,5 +15,8 @@ router.get('/', getAllEventGalleries);
 
 // Get event gallery by slug
 router.get('/:slug', getEventGalleryBySlug);
+
+// Delete event gallery by ID
+router.delete('/delete/:id', deleteEventGallery);
 
 export default router;

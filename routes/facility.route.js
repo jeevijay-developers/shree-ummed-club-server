@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createFacility, getFacilities, getFacilityBySlug } from '../controllers/facility.controller.js';
+import { createFacility, deleteFacility, getFacilities, getFacilityBySlug } from '../controllers/facility.controller.js';
 import { upload } from '../util/cloudinary.js';
 
 const router = Router();
@@ -12,5 +12,7 @@ router.get('/slug/:slug', getFacilityBySlug);
 
 // Create a new facility (with image upload)
 router.post('/', upload.array('images', 5), createFacility);
+
+router.delete('/delete/:id', deleteFacility);
 
 export default router;

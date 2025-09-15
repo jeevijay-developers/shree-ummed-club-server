@@ -1,4 +1,5 @@
 import EventGallery from '../models/eventGallery.model.js';
+import { deleteImagesFromCloudinary } from '../util/imageUtils.js';
 
 // Create a new event gallery
 export const createEventGallery = async (req, res) => {
@@ -79,6 +80,48 @@ export const getEventGalleryBySlug = async (req, res) => {
     
     res.json(eventGallery);
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Delete event gallery by ID
+export const deleteEventGallery = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // First find the event gallery to get its images
+    const eventGallery = await EventGallery.findById(id);
+    if (!eventGallery) return res.status(404).json({ error: 'Event gallery not found' });
+    
+    // Collect all images (banner + gallery images)
+    const allImages = [];
+    if (eventGallery.banner) allImages.push(eventGallery.banner);
+    if (eventGallery.images && eventGallery.images.length > 0) {
+      allImages.push(...eventGallery.images);
+    }
+    
+    // Delete images from Cloudinary
+    let deletedImagesCount = 0;
+    if (allImages.length > 0) {
+      try {
+        const deleteResults = await deleteImagesFromCloudinary(allImages, 'facilities');
+        deletedImagesCount = deleteResults.filter(result => !result.error).length;
+      } catch (error) {
+        console.error('Error deleting images from Cloudinary:', error);
+        // Continue with deletion even if image deletion fails
+      }
+    }
+    
+    // Delete the event gallery
+    await EventGallery.findByIdAndDelete(id);
+    
+    res.json({ 
+      message: 'Event gallery deleted successfully',
+      deletedImages: deletedImagesCount,
+      totalImages: allImages.length
+    });
+  } catch (err) {
+    console.error('Error deleting event gallery:', err);
     res.status(500).json({ error: err.message });
   }
 };

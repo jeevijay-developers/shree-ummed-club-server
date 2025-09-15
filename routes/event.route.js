@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createEvent, getEvents, getEventsByDate } from '../controllers/event.controller.js';
+import { createEvent, getEvents, getEventsByDate, deleteEvent } from '../controllers/event.controller.js';
 import { upload } from '../util/cloudinary.js';
 
 const router = Router();
@@ -12,5 +12,8 @@ router.get('/', getEvents);
 
 // Get events by date (YYYY-MM-DD format)
 router.get('/date/:date', getEventsByDate);
+
+// Delete event by ID
+router.delete('/delete/:id', deleteEvent);
 
 export default router;

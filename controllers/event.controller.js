@@ -1,4 +1,5 @@
 import Event from '../models/event.model.js';
+import { deleteImageFromCloudinary } from '../util/imageUtils.js';
 
 // Create a new event
 export const createEvent = async (req, res) => {
@@ -57,6 +58,41 @@ export const getEventsByDate = async (req, res) => {
     
     res.json(events);
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Delete event by ID
+export const deleteEvent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // First find the event to get its image
+    const event = await Event.findById(id);
+    if (!event) return res.status(404).json({ error: 'Event not found' });
+    
+    // Delete image from Cloudinary
+    let deletedImage = false;
+    if (event.image) {
+      try {
+        await deleteImageFromCloudinary(event.image, 'facilities');
+        deletedImage = true;
+        console.log(`Deleted event image from Cloudinary: ${event.image}`);
+      } catch (error) {
+        console.error('Error deleting image from Cloudinary:', error);
+        // Continue with deletion even if image deletion fails
+      }
+    }
+    
+    // Delete the event
+    await Event.findByIdAndDelete(id);
+    
+    res.json({ 
+      message: 'Event deleted successfully',
+      deletedImage: deletedImage
+    });
+  } catch (err) {
+    console.error('Error deleting event:', err);
     res.status(500).json({ error: err.message });
   }
 };
