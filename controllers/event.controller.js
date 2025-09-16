@@ -4,7 +4,7 @@ import { deleteImageFromCloudinary } from '../util/imageUtils.js';
 // Create a new event
 export const createEvent = async (req, res) => {
   try {
-    const { eventDate, shortDescription } = req.body;
+    const { eventDate, shortDescription, name } = req.body;
     
     // Handle image upload
     let image = '';
@@ -14,7 +14,7 @@ export const createEvent = async (req, res) => {
       return res.status(400).json({ error: 'Image is required' });
     }
 
-    const event = new Event({ image, eventDate, shortDescription });
+    const event = new Event({ image, eventDate, shortDescription, name });
     await event.save();
     res.status(201).json(event);
   } catch (err) {
