@@ -6,6 +6,7 @@ import facilityRoutes from './routes/facility.route.js';
 import eventRoutes from './routes/event.route.js';
 import clubGalleryRoutes from './routes/clubGallery.route.js';
 import eventGalleryRoutes from './routes/eventGallery.route.js';
+import healthRoutes from './routes/health.route.js';
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use('/api/facilities', facilityRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/club-gallery', clubGalleryRoutes);
 app.use('/api/event-gallery', eventGalleryRoutes);
+app.use('/api/health', healthRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
